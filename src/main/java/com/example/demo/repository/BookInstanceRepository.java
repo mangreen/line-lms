@@ -14,7 +14,8 @@ public interface BookInstanceRepository extends JpaRepository<BookInstance, Long
 
     @Query("SELECT i FROM BookInstance i WHERE i.book.id = :bookId " +
            "AND (:available IS NULL OR i.isAvailable = :available) " +
-           "AND (:location IS NULL OR LOWER(i.location) LIKE LOWER(CONCAT('%', :location, '%')))")
+           // 對 i.location 和 :location 參數進行 CAST 轉換
+           "AND (:location IS NULL OR LOWER(CAST(i.location AS text)) LIKE LOWER(CONCAT('%', CAST(:location AS text), '%')))")
     List<BookInstance> findInstancesByCriteria(
         Long bookId, 
         Boolean available, 
