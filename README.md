@@ -96,4 +96,6 @@ http://localhost:8080/swagger-ui.html
 1. 註冊帳號: 呼叫 POST /api/auth/register，建立館員(LIBRARIAN)或一般用戶(Member)
 2. 登入: 呼叫 POST /api/auth/login，獲取 JWT Token。
 3. 設定 Token: 設定 Header Authorize（格式為：Bearer eyJ...）。
-4. 操作: 測試需要 LIBRARIAN 權限的 API（例如：POST /api/books/add），或使用 Member 測試借閱功能。
+4. 使用 LIBRARIAN 權限新增書籍以及書籍實體。
+5. 使用 Member 查詢書籍以及書籍實體，並借閱可借閱書籍實體。
+6. 確認 ScheduledTasks（到期通知任務）每分鐘都有確實啟動

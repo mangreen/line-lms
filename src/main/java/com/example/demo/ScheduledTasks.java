@@ -16,7 +16,7 @@ public class ScheduledTasks {
         this.loanRepository = loanRepository;
     }
 
-    @Scheduled(cron = "* * 2 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void sendDueDateNotifications() {
         System.out.println("--- 開始發送即將到期通知 ---");
 
