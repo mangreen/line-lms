@@ -56,20 +56,19 @@ docker-compose up -d
 ### 執行與除錯
 執行 Maven 命令來建置與運行專案：
 ```bash
-# 建置專案
+# 打包專案成 .jar
 mvn clean package -DskipTests
 
 # 運行專案
 mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-建立 Docker Image
+當你打包好 .jar 也可以使用 Docker 運行專案
 ```bash
+# 建立 Docker Image
 docker build -t linelms:0.0.1 .
-```
 
-執行 Docker Image
-```bash
+# 執行 Docker Image
 docker run -it --rm --name linelms -p 8080:8080 linelms:0.0.1
 ```
 
