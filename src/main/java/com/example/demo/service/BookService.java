@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -122,5 +122,26 @@ public class BookService {
             throw new RuntimeException("書籍副本已被借出，無法刪除。");
         }
         bookInstanceRepository.deleteById(instanceId);
+    }
+
+    public List<BookInstanceDto> findInstances(Long bookId, Optional<Boolean> available, Optional<String> location) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new RuntimeException("找不到書籍 ID：" + bookId);
+        }
+        
+        // 將 Optional 轉換為可為 null 的值
+        Boolean isAvailable = available.orElse(null);
+        String locationKeyword = location.orElse(null);
+        
+        List<BookInstance> instances = bookInstanceRepository.findInstancesByCriteria(
+            bookId, 
+            isAvailable, 
+            locationKeyword
+        );
+        
+        // 將實體轉換為 DTO
+        return instances.stream().map(instance -> {
+            return convertToDto(instance);
+        }).collect(Collectors.toList());
     }
 }

@@ -49,7 +49,8 @@ public class AuthController {
                    @ApiResponse(responseCode = "200", description = "註冊成功，回傳使用者資訊"),
                    @ApiResponse(responseCode = "400", description = "使用者名稱已存在或館員驗證失敗")
                })
-    public ResponseEntity<?> registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(@org.springframework.web.bind.annotation.RequestBody User user) {
+        System.out.println(user);
         try {
             User registeredUser = authService.registerUser(user);
             return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
@@ -67,7 +68,7 @@ public class AuthController {
                                 content = @Content(mediaType = "application/json", schema = @Schema(example = "{\"token\": \"eyJ...\"}"))),
                    @ApiResponse(responseCode = "400", description = "使用者名稱或密碼不正確")
                })
-    public ResponseEntity<Map<String, String>> createAuthenticationToken(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> createAuthenticationToken(@org.springframework.web.bind.annotation.RequestBody User user) {
         try {
             // 透過 AuthenticationManager 進行驗證，如果密碼不正確會拋出異常
             authenticationManager.authenticate(

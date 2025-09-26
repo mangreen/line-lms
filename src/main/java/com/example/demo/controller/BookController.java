@@ -1,22 +1,33 @@
 package com.example.demo.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.dto.BookDto;
 import com.example.demo.dto.BookInstanceDto;
 import com.example.demo.model.Book;
 import com.example.demo.model.BookInstance;
 import com.example.demo.service.BookService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -40,7 +51,7 @@ public class BookController {
                    @ApiResponse(responseCode = "400", description = "請求資料無效"),
                    @ApiResponse(responseCode = "403", description = "權限不足 (非 LIBRARIAN)")
                })
-    public ResponseEntity<BookDto> addNewBook(@RequestBody Book book) {
+    public ResponseEntity<BookDto> addNewBook(@org.springframework.web.bind.annotation.RequestBody Book book) {
         return ResponseEntity.ok(bookService.addNewBook(book));
     }
 
@@ -67,7 +78,7 @@ public class BookController {
                    @ApiResponse(responseCode = "400", description = "請求資料無效或書籍不存在"),
                    @ApiResponse(responseCode = "403", description = "權限不足 (非 LIBRARIAN)")
                })
-    public ResponseEntity<BookDto> updateBook(@PathVariable Long bookId, @RequestBody Book book) {
+    public ResponseEntity<BookDto> updateBook(@PathVariable Long bookId, @org.springframework.web.bind.annotation.RequestBody Book book) {
         return ResponseEntity.ok(bookService.updateBook(bookId, book));
     }
 
@@ -97,7 +108,7 @@ public class BookController {
                    @ApiResponse(responseCode = "400", description = "書籍不存在"),
                    @ApiResponse(responseCode = "403", description = "權限不足 (非 LIBRARIAN)")
                })
-    public ResponseEntity<BookInstanceDto> addNewBookInstance(@PathVariable Long bookId, @RequestBody BookInstance instance) {
+    public ResponseEntity<BookInstanceDto> addNewBookInstance(@PathVariable Long bookId, @org.springframework.web.bind.annotation.RequestBody BookInstance instance) {
         return ResponseEntity.ok(bookService.addNewBookInstance(bookId, instance.getLocation()));
     }
 
@@ -114,5 +125,27 @@ public class BookController {
     public ResponseEntity<Void> deleteBookInstance(@PathVariable Long instanceId) {
         bookService.deleteBookInstance(instanceId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{bookId}/instance")
+    @Operation(summary = "列出書籍副本（館藏實體）",
+               description = "根據書籍 ID 列出所有副本，可透過 `available` 和 `location` 參數過濾。",
+               parameters = {
+                   @Parameter(name = "bookId", description = "要查詢的書籍 ID"),
+                   @Parameter(name = "available", description = "是否可借閱 (true/false, 可選)"),
+                   @Parameter(name = "location", description = "館別關鍵字 (可選)")
+               },
+               responses = {
+                   @ApiResponse(responseCode = "200", description = "查詢成功，回傳 BookInstanceDto 列表"),
+                   @ApiResponse(responseCode = "400", description = "書籍不存在"),
+                   @ApiResponse(responseCode = "401", description = "未提供 JWT Token")
+               })
+    public ResponseEntity<List<BookInstanceDto>> getBookInstances(
+            @PathVariable Long bookId,
+            @RequestParam(required = false) Optional<Boolean> available,
+            @RequestParam(required = false) Optional<String> location) {
+
+        List<BookInstanceDto> instances = bookService.findInstances(bookId, available, location);
+        return ResponseEntity.ok(instances);
     }
 }
