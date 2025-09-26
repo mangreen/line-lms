@@ -47,6 +47,19 @@
   - 借閱數量或期限超過規則時需提示錯誤。
 
 ## 如何開始
+
+### 專案技術棧
+- 後端框架: Spring Boot 3.x, Spring Security (JWT)
+- 資料庫: PostgreSQL (透過 JPA/Hibernate)
+- API 文件: Springdoc-OpenAPI (Swagger UI)
+- 構建工具: Maven
+
+### 環境要求
+在開始之前，請確保你的系統已安裝以下軟體：
+- JDK 17 或更高版本
+- Maven 3.6 或更高版本
+- Docker Desktop
+  
 ### 啟動資料庫
 執行以下命令來啟動 PostgreSQL 容器：
 ```bash
