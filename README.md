@@ -91,3 +91,9 @@ docker run -it --rm --name linelms -p 8080:8080 linelms:0.0.1
 http://localhost:8080/swagger-ui.html
 ```
 可以存取 Swagger UI 測試和理解 API。
+
+### 測試流程（JWT 認證）
+1. 註冊帳號: 呼叫 POST /api/auth/register，建立館員(LIBRARIAN)或一般用戶(Member)
+2. 登入: 呼叫 POST /api/auth/login，獲取 JWT Token。
+3. 設定 Token: 設定 Header Authorize（格式為：Bearer eyJ...）。
+4. 操作: 測試需要 LIBRARIAN 權限的 API（例如：POST /api/books/add），或使用 Member 測試借閱功能。
